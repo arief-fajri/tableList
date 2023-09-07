@@ -1,58 +1,158 @@
-# create-svelte
+# tableList
+A simple library to display data table. Allow sorting based on column values, row selection/expanding, and sticky header.
 
-Everything you need to build a Svelte library, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+<!-- #Install 
 
-Read more about creating a library [in the docs](https://kit.svelte.dev/docs/packaging).
-
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
+```sh
+npm install tablelist
 ```
 
-## Developing
+## Usage
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+The package includes exports for raw svelte by using `import SvelteTable from "svelte-table"`
 
-```bash
-npm run dev
+```html
+<script>
+  import TableList from "tablelist";
+  const data = [
+    /** data (example below) */
+  ];
+  const columns = [
+    /** columns config (example below) */
+  ];
+</script>
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+<TableList selectorId="main" top={0} columns={columns} data={data}></SvelteTable>
+``` -->
+
+## Sample Data and config
+
+```js
+// define some sample data...
+const rows = [
+  { id: 1, first_name: "Marilyn", last_name: "Monroe", pet: "dog" },
+  { id: 2, first_name: "Abraham", last_name: "Lincoln", pet: "dog" },
+  { id: 3, first_name: "Mother", last_name: "Teresa", pet: "" },
+  { id: 4, first_name: "John F.", last_name: "Kennedy", pet: "dog" },
+  { id: 5, first_name: "Martin Luther", last_name: "King", pet: "dog" },
+  { id: 6, first_name: "Nelson", last_name: "Mandela", pet: "cat" },
+  { id: 7, first_name: "Winston", last_name: "Churchill", pet: "cat" },
+  { id: 8, first_name: "George", last_name: "Soros", pet: "bird" },
+  { id: 9, first_name: "Bill", last_name: "Gates", pet: "cat" },
+  { id: 10, first_name: "Muhammad", last_name: "Ali", pet: "dog" },
+  { id: 11, first_name: "Mahatma", last_name: "Gandhi", pet: "bird" },
+  { id: 12, first_name: "Margaret", last_name: "Thatcher", pet: "cat" },
+  { id: 13, first_name: "Christopher", last_name: "Columbus", pet: "dog" },
+  { id: 14, first_name: "Charles", last_name: "Darwin", pet: "dog" },
+  { id: 15, first_name: "Elvis", last_name: "Presley", pet: "dog" },
+  { id: 16, first_name: "Albert", last_name: "Einstein", pet: "dog" },
+  { id: 17, first_name: "Paul", last_name: "McCartney", pet: "cat" },
+  { id: 18, first_name: "Queen", last_name: "Victoria", pet: "dog" },
+  { id: 19, first_name: "Pope", last_name: "Francis", pet: "cat" },
+  // etc...
+];
+
+// define column configs
+const columns = [
+  {
+    key: "id",
+    title: "ID",
+    value: v => v.id,
+    sortable: true,
+  },
+  {
+    key: "first_name",
+    title: "FIRST_NAME",
+    value: v => v.first_name,
+    sortable: true,
+  },
+  {
+    key: "last_name",
+    title: "LAST_NAME",
+    value: v => v.last_name,
+    sortable: true,
+  },
+  {
+    key: "pet",
+    title: "Pet",
+    value: v => v.pet,
+    sortable: true,
+  },
+];
 ```
 
-Everything inside `src/lib` is part of your library, everything inside `src/routes` can be used as a showcase or preview app.
+## Props
 
-## Building
+| Option                     | Type            | Default         | Description                                              |
+| -------------------------- | --------------- | -------------------------------------------------------------------------- |
+| `selectorId`               | String          | main-content    | main container ID                                        |
+| `columns`                  | Object[]        | []              | column config (details below)                            |
+| `data`                     | Object[]        | []              | row (data) array                                         |
+| `containerHeight`          | Number          | 0               | _optional_ set table height                              |
+| `top`                      | Number          | 0               | position of sticky header                                |
+| `zIndex`                   | Number          | 0               | index of sticky header                                   |
+| `loading`                  | Boolean         | true            | ‡ trigger loading skeleton                               |
+| `isClickable`              | Boolean         | true            | add cursor pointer on row and trigger click function     |
+| `isExpand`                 | Boolean         | false           | ‡ trigger loading skeleton                               |
+| `expandComponent`          | Boolean         |                 | component to render expanded row                         |
+| `emptyText`                | Boolean         | Data not found! | will render if data is empty                           |
+| `backgroundColor`          | Object{}        | {}              | background color config (details below)                  |
+| `textColor`                | Object{}        | {}              | text color config (details below)                        |
 
-To build your library:
+_‡_ field allows 2-way binding
 
-```bash
-npm run package
+### Events
+
+Events pass a CustomEvent object with the following params in the `detail` object
+
+| event         | detail parameters     | Description                                                                                                 |
+| ------------- | --------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `click`       | `key`, `row`          | click on column                                                                                             |
+| `sort`        | `key`, `sort`         | click on header to sorting data (the value of sort is _null_, _asc_, _desc_)                                |
+| `bottom`      |                       | append new data (use this if you want streams data from a remote server as the user scrolls down the table) |
+
+## Column array object values
+
+| Option                | Type           | Description                                                                                            |
+| --------------------- | -------------- | ------------------------------------------------------------------------------------------------------ |
+| `key`                 | String         | Unique key identifying the column                                                                      |
+| `title`               | String         | Title for header                                                                                       |
+| `value`               | Function       | table cell value. The function is passed row data                                                      |
+| `[class]`             | String         | _optional_ table cell class name                                                                       |
+| `[headerClass]`       | String         | _optional_ class to assign to header element                                                           |
+| `[renderComponent]`   | Component      | _optional_ pass a Svelte component, it will receive `col` variables                                    |
+
+### `renderComponent`
+
+Defining a component can be done directly by passing the component as a value
+
+```js
+[
+  {
+    key: "myColumn",
+    //...
+    renderComponent: myComponent,
+  },
+];
 ```
 
-To create a production version of your showcase app:
+## Background color array object values
 
-```bash
-npm run build
-```
+| Option                | Type           | Description                            |
+| --------------------- | -------------- | -------------------------------------- |
+| `base`                | String         | Background color for table             |
+| `header`              | String         | Background color for header            |
+| `loader`              | String         | Background color for loading skeleton  |
+| `hover`               | String         | Background color for hovering row      |
+| `expanded`            | String         | Background color when expand is open   |
 
-You can preview the production build with `npm run preview`.
+## Text color array object values
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+| Option                | Type           | Description                      |
+| --------------------- | -------------- | -------------------------------- |
+| `default`             | String         | Text color for table             |
+| `header`              | String         | Text color for header            |
 
-## Publishing
-
-Go into the `package.json` and give your package the desired name through the `"name"` option. Also consider adding a `"license"` field and point it to a `LICENSE` file which you can create from a template (one popular option is the [MIT license](https://opensource.org/license/mit/)).
-
-To publish your library to [npm](https://www.npmjs.com):
-
-```bash
-npm publish
-```
+It has been inspired by:
+- [sticky-table-headers](https://launchhubstudio.com/blog/sticky-table-headers)
+- [svelte-table](https://github.com/dasDaniel/svelte-table)
