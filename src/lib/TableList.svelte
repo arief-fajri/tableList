@@ -1,18 +1,29 @@
 <script>
 	import { onDestroy, onMount, createEventDispatcher } from "svelte"
     import { intersect } from '.intersectObserver.js';
-	import Icon from "@iconify/svelte"
-
+    
     export let selectorId = 'main-content'
     export let columns = []
     export let data = []
     export let top = 0
     export let loading = true
-    export let isExpand
+    export let isExpand = false
     export let isClickable = true
     export let expandComponent
     export let containerHeight = 0
     export let zIndex = 1
+    export let emptyText = 'Data not found!'
+    export let backgroundColor = {
+        base: '',
+        header: '',
+        loader: '',
+        hover: '',
+        expanded: ''
+    }
+    export let textColor = {
+        default: '',
+        header: ''
+    }
 
     let scrollContainer
     let tableHeight
@@ -175,34 +186,45 @@
     })
 </script>
 
-<div class="tableContainer scrollbar-none" style="--top: {top}px; --zIndex: {zIndex}; {containerHeight ? `max-height: ${containerHeight}px;` : ''}" bind:clientHeight={tableHeight} >
+<div 
+    class="tableContainer" 
+    style="{containerHeight ? `max-height: ${containerHeight}px;` : ''}" 
+    style:--top={`${top}px`}
+    style:--zIndex={zIndex}
+    style:--background-base={backgroundColor.base || 'transparent'}
+    style:--background-header={backgroundColor.header || 'transparent'}
+    style:--background-loader={backgroundColor.loader || '#3C3C3C'}
+    style:--hover-color={backgroundColor.hover || 'transparent'}
+    style:--background-expanded={backgroundColor.expanded || 'transparent'}
+    style:--color-default={textColor.default || ''}
+    style:--color-header={textColor.header || ''}
+    bind:clientHeight={tableHeight} 
+>
     <table>
         <thead>
             <tr class="columnHeaders">
                 {#each columns as c, i}
                     <th 
                         scope="col" 
-                        class="columnHeader {c.sorting ? 'cursor-pointer' : ''}"
+                        class="columnHeader {c.headerClass ? c.headerClass : ''}"
+                        style:cursor={c.sortable ? 'pointer' : 'default'}
                         on:click={() => {
-                            if (c.sorting) {
+                            if (c.sortable) {
                               sort(c.key);
-                            }else if(c.filtering){
-                              const {top, left, bottom, right, width, height} = c.headerComp.getBoundingClientRect()
-                              dispatch("filter", { key: c.key, position: {top: top - 2, left, bottom, right, width, height}});
                             }
                           }}
                     >
-                        <div class="flex items-center gap-2 flex-none">
-                            <p>{c.name}</p>
-                            {#if c.sorting}
+                        <div class="header-item">
+                            <p>{c.title}</p>
+                            {#if c.sortable}
                                 <div
-                                    class="text-xl flex items-center transition duration-300 {c.sort === 'asc' ? 'rotate-180' : 'rotate-0'} {!c.sorting
-                                    ? 'text-transparent'
-                                    : !c.sort
-                                    ? 'text-base-light/[.5]'
-                                    : 'text-[#EAEAEA]'}"
+                                    class="icon"
+                                    style:transform={c.sort === 'asc' ? 'rotate(180deg)' : 'rotate(0deg)'}
+                                    style:color={c.sort ? `${textColor.header || '#EAEAEA'}` : `${textColor.header || '#EAEAEA'}80`}
                                 >
-                                    <Icon icon="eva:arrow-upward-fill" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 13V3M9 6l3-3l3 3m-3 11a2 2 0 1 1 0 4a2 2 0 0 1 0-4z"/>
+                                    </svg>
                                 </div>
                             {/if}
                         </div>
@@ -225,8 +247,9 @@
                     {#each columns as c, i}
                         <!-- svelte-ignore a11y-misplaced-scope -->
                         <td 
-                            class="{c.class || ''} {isExpand && i === 0 ? 'flex items-center gap-1' : ''}" 
-                            class:cursor-pointer={isClickable}
+                            class="{c.class || ''}" 
+                            class:isExpand={isExpand && i === 0 }
+                            style:cursor={isClickable || isExpand ? 'pointer' : 'default'}
                             on:click={() => {
                                 if (isExpand) {
                                   if(c.key){
@@ -238,9 +261,17 @@
                               }}
                             >
                             {#if isExpand && i === 0}
-                                <div class:rotate-180={row.expanded} class="transrition duration-300">
-                                    <div class="text-2xl">
-                                        <Icon icon="eva:chevron-down-fill"/>
+                                <div class="open"
+                                    style:transform={row.expanded ? 'rotate(180deg)' : 'rotate(0deg)'}
+                                >
+                                    <div class="icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                            <g id="evaChevronDownFill0">
+                                                <g id="evaChevronDownFill1">
+                                                    <path id="evaChevronDownFill2" fill="currentColor" d="M12 15.5a1 1 0 0 1-.71-.29l-4-4a1 1 0 1 1 1.42-1.42L12 13.1l3.3-3.18a1 1 0 1 1 1.38 1.44l-4 3.86a1 1 0 0 1-.68.28Z"/>
+                                                </g>
+                                            </g>
+                                        </svg>
                                     </div>
                                 </div>
                             {/if}
@@ -253,7 +284,7 @@
                     {/each}
                 </tr>
                 <tr>
-                    <td colspan={columns.length} class="isExpand bg-[#292929]" style="padding: 0;">
+                    <td colspan={columns.length} class="expanded" style="padding: 0;">
                       <div class="expand" class:open={row.expanded} style="--expand-height: {row.expand_height}px; ">
                         <div bind:clientHeight={row.expand_height}>
                           <svelte:component this={expandComponent} value={row}/>
@@ -265,22 +296,19 @@
             {#if loading}
                 {#each { length: 3 } as _, i}
                     <tr class="loading">
-                    {#each columns as c, j}
-                        <td>
-                            <div class="bg-grey w-full h-6 bg-[#3C3C3C] animate-pulse" style="animation-delay: {(j + i) * 300}ms;" />
-                        </td>
-                    {/each}
+                        {#each columns as _, j}
+                            <td>
+                                <div class="loader" style="animation-delay: {(j + i) * 300}ms;" />
+                            </td>
+                        {/each}
                     </tr>
                 {/each}
             {/if}
             {#if !loading && !data.length}
                 <tr>
                     <td colspan={columns.length}>
-                        <div class="w-full py-10 flex flex-col items-center justify-center">
-                            <div class="mb-4">
-                                <img src="/empty.svg" alt="" class="w-full h-full">
-                            </div>
-                            <p class="font-semibold mt-2">Tidak ada data</p>
+                        <div class="empty">
+                            <p class="font-semibold mt-2">{emptyText}</p>
                         </div>
                     </td>
                 </tr>
@@ -298,11 +326,13 @@
     }
 }}/>
 
-<style lang="postcss">
+<style>
     .tableContainer {
         overflow: auto;
         overflow-anchor: none;
         position: relative;
+        background: var(--background-base);
+        color: var(--textColor-default);
     }
     table {
         border-collapse: separate;
@@ -311,56 +341,106 @@
         table-layout: auto;
     }
     thead tr {
-        @apply bg-base-soft;
+        background: var(--background-header);
+        color: var(--textColor-header);
         position: sticky;
         top: 0;
         left: 0;
         z-index: var(--zIndex);
     }
     th {
-        @apply px-3 py-2 text-left;
+        padding: 8px 12px;
     }
     td {
-        @apply px-3 py-2;
+        padding: 8px 12px;
+        cursor: pointer;
     }
     tbody tr:hover {
-        @apply bg-base-carbon/[0.5];
+        background: var(--background-hover);
     }
 
+    .header-item {
+        display: flex;
+        flex: none;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .header-item .icon {
+        height: 1.25rem;
+        display: flex;
+        align-items: center;
+        transition-property: all;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 300ms;
+    }
+
+    .isExpand {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+    .isExpand .open {
+        transition-property: all;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 300ms;
+    }
     .expand {
         max-height: 0px;
         overflow: hidden;
         transition: max-height .5s;
         background: #2D2D2D;
     }
-
     .expand.open {
         transition: max-height .5s;
         max-height: var(--expand-height);
     }
     .expanded {
-      /* @apply border-b border-base-lightest; */
-        background: #333333 !important;
+        background: var(--background-expanded) !important;
+    }
+
+    .loader {
+        height: 1.5rem;
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        background: var(--background-loader);
+    }
+
+    .empty {
+        width: 100%;
+        min-height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: .5;
+        }
     }
 
     :global(.tableContainer .rowHeader) {
-        @apply bg-base-soft;
+        background: var(--background-header);
         left: 0;
         position: sticky;
     }
     :global(.tableContainer [scope="row"]) {
-        @apply bg-base;
+        background: var(--background-base);
         left: 0;
         position: sticky;
     }
 
     :global(.tableContainer thead.stickyHeader){
-        @apply transition-all duration-300;
         position: fixed;
         z-index: var(--zIndex);
         overflow-x: scroll;
         top: var(--top);
-        /* transition: 300ms; */
+        transition-property: all;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 300ms;
     }
     :global(.tableContainer thead.stickyHeader.atBottom){
         position: absolute;
