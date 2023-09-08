@@ -1,10 +1,10 @@
 # tableList
 A simple library to display data table. Allow sorting based on column values, row selection/expanding, and sticky header.
 
-<!-- #Install 
+#Install 
 
 ```sh
-npm install tablelist
+npm i @rief_/tablelist
 ```
 
 ## Usage
@@ -22,8 +22,8 @@ The package includes exports for raw svelte by using `import SvelteTable from "s
   ];
 </script>
 
-<TableList selectorId="main" top={0} columns={columns} data={data}></SvelteTable>
-``` -->
+<TableList columns={columns} data={data}></SvelteTable>
+```
 
 ## Sample Data and config
 
