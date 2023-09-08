@@ -85,7 +85,7 @@ const columns = [
 
 | Option                     | Type            | Default         | Description                                              |
 | -------------------------- | --------------- | -------------------------------------------------------------------------- |
-| `selectorId`               | String          | main-content    | main container ID                                        |
+| `selectorId`               | String          |                 | main scrollable container ID                                        |
 | `columns`                  | Object[]        | []              | column config (details below)                            |
 | `data`                     | Object[]        | []              | row (data) array                                         |
 | `containerHeight`          | Number          | 0               | _optional_ set table height                              |

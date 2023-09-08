@@ -1,8 +1,8 @@
 <script>
 	import { onDestroy, onMount, createEventDispatcher } from "svelte"
-    import { intersect } from '.intersectObserver.js';
+    import { intersect } from './intersectObserver.js';
     
-    export let selectorId = 'main-content'
+    export let selectorId = ''
     export let columns = []
     export let data = []
     export let top = 0
@@ -31,6 +31,7 @@
     const dispatch = createEventDispatcher();
 
     function onScroll() {
+        console.log('cek')
         try {
             let compTable = document.querySelector(".tableContainer");
             
@@ -169,14 +170,19 @@
     }
     
     onMount(()=>{
-        if(containerHeight){
+        if(selectorId){
             scrollContainer = document.getElementById(selectorId); // define scroll container
             if(scrollContainer){
                 scrollContainer.addEventListener("scroll", onScroll, {
-                  passive: false,
+                passive: false,
                 });
             }
+        }else{
+            window.addEventListener("scroll", onScroll, {
+              passive: false,
+            });
         }
+        console.log(scrollContainer)
     })
 
     onDestroy(()=>{
@@ -186,9 +192,10 @@
     })
 </script>
 
+<!-- style="{containerHeight ? `max-height: ${containerHeight}px;` : ''}"  -->
 <div 
     class="tableContainer" 
-    style="{containerHeight ? `max-height: ${containerHeight}px;` : ''}" 
+    style="{containerHeight ? `max-height: ${containerHeight}px;` : ''}"
     style:--top={`${top}px`}
     style:--zIndex={zIndex}
     style:--background-base={backgroundColor.base || 'transparent'}
