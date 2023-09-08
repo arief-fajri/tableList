@@ -1,7 +1,7 @@
 # tableList
 A simple library to display data table. Allow sorting based on column values, row selection/expanding, and sticky header.
 
-#Install 
+## Install 
 
 ```sh
 npm i @rief_/tablelist
@@ -101,7 +101,7 @@ const columns = [
 
 _‡_ field allows 2-way binding
 
-### Events
+## Events
 
 Events pass a CustomEvent object with the following params in the `detail` object
 
