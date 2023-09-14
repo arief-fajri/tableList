@@ -83,21 +83,21 @@ const columns = [
 
 ## Props
 
-| Option                     | Type            | Default         | Description                                              |
-| -------------------------- | --------------- | -------------------------------------------------------------------------- |
-| `selectorId`               | String          |                 | main scrollable container ID                                        |
-| `columns`                  | Object[]        | []              | column config (details below)                            |
-| `data`                     | Object[]        | []              | row (data) array                                         |
-| `containerHeight`          | Number          | 0               | _optional_ set table height                              |
-| `top`                      | Number          | 0               | position of sticky header                                |
-| `zIndex`                   | Number          | 0               | index of sticky header                                   |
-| `loading`                  | Boolean         | true            | ‡ trigger loading skeleton                               |
-| `isClickable`              | Boolean         | true            | add cursor pointer on row and trigger click function     |
-| `isExpand`                 | Boolean         | false           | ‡ trigger loading skeleton                               |
-| `expandComponent`          | Boolean         |                 | component to render expanded row                         |
-| `emptyText`                | Boolean         | Data not found! | will render if data is empty                           |
-| `backgroundColor`          | Object{}        | {}              | background color config (details below)                  |
-| `textColor`                | Object{}        | {}              | text color config (details below)                        |
+| Option                     | Type              | Default           | Description                                              |
+| -------------------------- | ----------------- | ----------------- | ------------------------------------------------------   |
+| `selectorId`               | `String`          |                   | main scrollable container ID                             |
+| `columns`                  | `Object[]`        | `[]`              | column config (details below)                            |
+| `data`                     | `Object[]`        | `[]`              | row (data) array                                         |
+| `containerHeight`          | `Number`          | `0`               | _optional_ set table height                              |
+| `top`                      | `Number`          | `0`               | position of sticky header                                |
+| `zIndex`                   | `Number`          | `0`               | index of sticky header                                   |
+| `loading`                  | `Boolean`         | `true`            | ‡ trigger loading skeleton                               |
+| `isClickable`              | `Boolean`         | `true`            | add cursor pointer on row and trigger click function     |
+| `isExpand`                 | `Boolean`         | `false`           | ‡ trigger loading skeleton                               |
+| `expandComponent`          | `Boolean`         |                   | component to render expanded row                         |
+| `emptyText`                | `Boolean`         | `Data not found!` | will render if data is empty                             |
+| `backgroundColor`          | `Object{}`        | `{}`              | background color config (details below)                  |
+| `textColor`                | `Object{}`        | `{}`              | text color config (details below)                        |
 
 _‡_ field allows 2-way binding
 
