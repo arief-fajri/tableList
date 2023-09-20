@@ -1,6 +1,23 @@
 {
 	"name": "@rief_/tablelist",
-	"version": "0.0.3",
+	"version": "0.0.4",
+	"description": "Simple table list for svelte Component",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/arief-fajri/tableList.git"
+	},
+	"keywords": [
+		"javascript",
+		"npm",
+		"template",
+		"js",
+		"svelte",
+		"svelte-kit",
+		"web-component",
+		"svelte-component"
+	],
+	"author": "Arief Fajri",
+	"license": "MIT",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build && npm run package",
@@ -20,7 +37,7 @@
 		"!dist/**/*.spec.*"
 	],
 	"peerDependencies": {
-		"svelte": "^4.0.0"
+		"svelte": "^3.54.0 || ^4.0.0"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^2.0.0",

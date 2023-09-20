@@ -182,7 +182,6 @@
               passive: false,
             });
         }
-        console.log(scrollContainer)
     })
 
     onDestroy(()=>{

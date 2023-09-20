@@ -13,7 +13,7 @@ The package includes exports for raw svelte by using `import SvelteTable from "s
 
 ```html
 <script>
-  import TableList from "tablelist";
+  import TableList from "@rief_/tablelist";
   const data = [
     /** data (example below) */
   ];
@@ -22,7 +22,7 @@ The package includes exports for raw svelte by using `import SvelteTable from "s
   ];
 </script>
 
-<TableList columns={columns} data={data}></SvelteTable>
+<TableList columns={columns} data={data}></TableList>
 ```
 
 ## Sample Data and config
